@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceAttend | Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .verification-panel {
+            margin-top: 22px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+        .verification-panel h3 { margin: 0 0 14px; }
+        .verification-step {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid #edf0f4;
+        }
+        .verification-step:last-child { border-bottom: none; }
+        .verification-step p {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+        .verification-badge {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .verification-badge.pending { background: #f1f5f9; color: #64748b; }
+        .verification-badge.progress { background: #fef3c7; color: #92400e; }
+        .verification-badge.success { background: #dcfce7; color: #166534; }
+        .verification-badge.failed { background: #fee2e2; color: #991b1b; }
+        @media (max-width: 600px) {
+            .verification-step { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>FaceAttend</h2>
+                <p>Face Recognition Attendance</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-link active">Dashboard</a>
+                <a href="#liveRecognition" class="nav-link">Live Recognition</a>
+                <a href="#studentRegistration" class="nav-link">Student Registration</a>
+                <a href="#attendanceRecords" class="nav-link">Attendance Records</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar" id="dashboard">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Monitor face recognition and attendance activity.</p>
+                </div>
+                <span id="cameraBadge" class="camera-badge">Camera stopped</span>
+            </header>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <p>Total Attendance Entries</p>
+                    <h2 id="totalEntries">0</h2>
+                </article>
+                <article class="stat-card">
+                    <p>Unique Students</p>
+                    <h2 id="uniqueStudents">0</h2>
+                </article>
+                <article class="stat-card">
+                    <p>Latest Attendance Date</p>
+                    <h2 id="latestDate">--</h2>
+                </article>
+            </section>
+
+            <section class="content-section" id="liveRecognition">
+                <div class="section-heading">
+                    <div>
+                        <h2>Live Recognition</h2>
+                        <p>Camera feed, liveness verification, and identity matching.</p>
+                    </div>
+                </div>
+
+                <div class="webcam-layout">
+                    <div class="webcam-card">
+                        <div class="camera-frame">
+                            <img id="webcamFeed" alt="Live webcam feed" style="display:none;">
+                            <div id="cameraPlaceholder" class="camera-placeholder">
+                                <p>Camera feed is currently stopped.</p>
+                            </div>
+                        </div>
+                        <div class="camera-controls">
+                            <button id="startCamera" type="button">Start Camera</button>
+                            <button id="stopCamera" type="button">Stop Camera</button>
+                        </div>
+                    </div>
+
+                    <div class="recognition-panel">
+                        <h3>Recognition Result</h3>
+                        <p id="recognitionStatus">Camera is stopped</p>
+                        <div class="recognition-detail">
+                            <span>Student</span>
+                            <strong id="studentName">--</strong>
+                        </div>
+                        <div class="recognition-detail">
+                            <span>Roll Number</span>
+                            <strong id="studentRoll">--</strong>
+                        </div>
+                        <div class="recognition-detail">
+                            <span>Similarity</span>
+                            <strong id="similarity">--</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="verification-panel">
+                    <h3>Verification Pipeline</h3>
+                    <div class="verification-step">
+                        <div>
+                            <strong>1. Liveness Detection</strong>
+                            <p id="livenessDetail">Waiting for camera...</p>
+                        </div>
+                        <span id="livenessBadge" class="verification-badge pending">Waiting</span>
+                    </div>
+                    <div class="verification-step">
+                        <div>
+                            <strong>2. Identity Recognition</strong>
+                            <p id="identityDetail">Waiting for liveness verification...</p>
+                        </div>
+                        <span id="identityBadge" class="verification-badge pending">Waiting</span>
+                    </div>
+                    <div class="verification-step">
+                        <div>
+                            <strong>3. Attendance</strong>
+                            <p id="attendanceDetail">Waiting for identity recognition...</p>
+                        </div>
+                        <span id="attendanceBadge" class="verification-badge pending">Waiting</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="studentRegistration">
+                <div class="section-heading">
+                    <div>
+                        <h2>Student Registration</h2>
+                        <p>Register a student's face using ten embedding samples.</p>
+                    </div>
+                </div>
+
+                <div class="registration-card">
+                    <div class="form-group">
+                        <label for="studentNameInput">Student Name</label>
+                        <input id="studentNameInput" type="text" placeholder="Enter student name">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentRollInput">Roll Number</label>
+                        <input id="studentRollInput" type="text" placeholder="Enter roll number">
+                    </div>
+                    <div class="registration-controls">
+                        <button id="beginRegistration" type="button">Begin Registration</button>
+                        <button id="captureSample" type="button" disabled>Capture Sample</button>
+                        <button id="cancelRegistration" type="button" disabled>Cancel</button>
+                    </div>
+                    <div class="registration-progress">
+                        <div class="progress-label">
+                            <span>Samples captured</span>
+                            <strong><span id="sampleCount">0</span>/10</strong>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progressBar" class="progress-bar" style="width:0%;"></div>
+                        </div>
+                    </div>
+                    <p id="registrationMessage">Start the camera before beginning registration.</p>
+                </div>
+            </section>
+
+            <section class="content-section" id="attendanceRecords">
+                <div class="section-heading">
+                    <div>
+                        <h2>Attendance Records</h2>
+                        <p>Search, filter, and export attendance data.</p>
+                    </div>
+                </div>
+
+                <div class="table-toolbar">
+                    <input id="searchInput" type="search" placeholder="Search name or roll number">
+                    <input id="dateFilter" type="date">
+                    <button id="resetButton" type="button">Reset</button>
+                    <button id="exportButton" type="button">Export CSV</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Roll Number</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceBody">
+                            <tr><td colspan="5">Loading attendance records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

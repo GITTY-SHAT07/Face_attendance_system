@@ -1,0 +1,21 @@
+{
+    "checkpoint_epoch": 59,
+    "embedding_dimension": 128,
+    "validation_images": 80,
+    "genuine_pairs": 40,
+    "impostor_pairs": 3120,
+    "genuine_mean": 0.9045921206474304,
+    "impostor_mean": -0.009084791371810752,
+    "best_threshold": {
+        "threshold": 0.651,
+        "balanced_accuracy": 0.9998397435897436,
+        "false_accept_rate": 0.0003205128205128205,
+        "false_reject_rate": 0.0
+    },
+    "eer_candidate": {
+        "threshold": 0.651,
+        "balanced_accuracy": 0.9998397435897436,
+        "false_accept_rate": 0.0003205128205128205,
+        "false_reject_rate": 0.0
+    }
+}

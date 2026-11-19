@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+cv-env/
+.venv/
+
+# macOS
+.DS_Store
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Personal face registrations and attendance records
+known_faces/
+data/*.csv
+
+# Raw datasets
+training_data/
+
+# Temporary and backup files
+*.bak
+*.swp
+web_dashboard_backup.py
+recognize_live_backup.py
+
+# Generated logs
+*.log
