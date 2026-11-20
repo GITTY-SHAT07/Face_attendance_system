@@ -70,8 +70,8 @@ NORM_STD = (0.5, 0.5, 0.5)
 # ==============================================================================
 # MATCHING & TEMPORAL VOTING
 # ==============================================================================
-SIMILARITY_THRESHOLD = 0.651
-TOP_K_MATCH_SCORES = 3
+SIMILARITY_THRESHOLD = 0.751
+TOP_K_MATCH_SCORES = 1
 REQUIRED_CONSECUTIVE_FRAMES = 5
 
 
@@ -99,7 +99,7 @@ TRAIN_WEIGHT_DECAY = 0.0005
 # WEB SERVER & CAMERA
 # ==============================================================================
 SERVER_HOST = "0.0.0.0"
-SERVER_PORT = 5000
+SERVER_PORT = 5001
 SERVER_DEBUG = False
 CAMERA_INDEX = 0
 
