@@ -6,17 +6,30 @@ import time
 import os
 import random
 
+from config import (
+    LANDMARKER_MODEL_PATH,
+    LIVENESS_MIN_DETECTION_CONFIDENCE,
+    LIVENESS_MIN_PRESENCE_CONFIDENCE,
+    LIVENESS_MIN_TRACKING_CONFIDENCE,
+    EAR_THRESHOLD,
+    CLOSED_FRAMES_REQUIRED,
+    HEAD_TURN_THRESHOLD,
+    HEAD_RETURN_THRESHOLD,
+    CALIBRATION_FRAMES,
+)
+
 
 class LivenessDetector:
-    def __init__(self):
-        self.model_path = os.path.join(
-            os.path.dirname(__file__),
-            "models",
-            "face_landmarker.task"
-        )
+    def __init__(self, model_path=None):
+        self.model_path = model_path or LANDMARKER_MODEL_PATH
 
         if not os.path.exists(self.model_path):
-            raise FileNotFoundError(self.model_path)
+            # Fallback to relative to this file
+            fallback = os.path.join(os.path.dirname(__file__), "models", "face_landmarker.task")
+            if os.path.exists(fallback):
+                self.model_path = fallback
+            else:
+                raise FileNotFoundError(self.model_path)
 
         options = mp.tasks.vision.FaceLandmarkerOptions(
             base_options=mp.tasks.BaseOptions(
@@ -24,9 +37,9 @@ class LivenessDetector:
             ),
             running_mode=mp.tasks.vision.RunningMode.VIDEO,
             num_faces=1,
-            min_face_detection_confidence=0.6,
-            min_face_presence_confidence=0.6,
-            min_tracking_confidence=0.6
+            min_face_detection_confidence=LIVENESS_MIN_DETECTION_CONFIDENCE,
+            min_face_presence_confidence=LIVENESS_MIN_PRESENCE_CONFIDENCE,
+            min_tracking_confidence=LIVENESS_MIN_TRACKING_CONFIDENCE
         )
 
         self.landmarker = (
@@ -36,11 +49,12 @@ class LivenessDetector:
         self.left_eye = [362, 385, 387, 263, 373, 380]
         self.right_eye = [33, 160, 158, 133, 153, 144]
 
-        self.ear_threshold = 0.21
-        self.closed_frames_required = 2
+        self.ear_threshold = EAR_THRESHOLD
+        self.closed_frames_required = CLOSED_FRAMES_REQUIRED
 
-        self.turn_threshold = 12.0
-        self.return_threshold = 5.0
+        self.turn_threshold = HEAD_TURN_THRESHOLD
+        self.return_threshold = HEAD_RETURN_THRESHOLD
+        self.calibration_frames = CALIBRATION_FRAMES
 
         self.model_points = np.array([
             (0.0, 0.0, 0.0),
@@ -253,7 +267,7 @@ class LivenessDetector:
             if yaw is not None:
                 self.center_samples.append(yaw)
 
-            if len(self.center_samples) >= 25:
+            if len(self.center_samples) >= self.calibration_frames:
                 self.center_yaw = float(
                     np.mean(self.center_samples)
                 )

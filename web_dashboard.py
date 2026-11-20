@@ -27,14 +27,19 @@ from liveness_detection import LivenessDetector
 # CONFIGURATION
 # --------------------------------------------------
 
+from config import (
+    ATTENDANCE_FILE,
+    KNOWN_FACES_DIR,
+    SIMILARITY_THRESHOLD,
+    REQUIRED_CONSECUTIVE_FRAMES,
+    REQUIRED_REGISTRATION_SAMPLES,
+    TOP_K_MATCH_SCORES,
+    SERVER_HOST,
+    SERVER_PORT,
+    SERVER_DEBUG,
+)
+
 app = Flask(__name__)
-
-ATTENDANCE_FILE = Path("data/attendance.csv")
-KNOWN_FACES_DIR = "known_faces"
-
-SIMILARITY_THRESHOLD = 0.651
-REQUIRED_CONSECUTIVE_FRAMES = 5
-REQUIRED_REGISTRATION_SAMPLES = 10
 
 
 # --------------------------------------------------
@@ -174,7 +179,7 @@ def compare_embedding(
     scores = registered_embeddings @ query_embedding
 
     top_scores = np.sort(scores)[
-        -min(3, len(scores)):
+        -min(TOP_K_MATCH_SCORES, len(scores)):
     ]
 
     return float(np.mean(top_scores))
@@ -877,8 +882,8 @@ def cancel_registration():
 if __name__ == "__main__":
 
     app.run(
-        host="127.0.0.1",
-        port=5001,
-        debug=False,
+        host=SERVER_HOST,
+        port=SERVER_PORT,
+        debug=SERVER_DEBUG,
         threaded=True
     )

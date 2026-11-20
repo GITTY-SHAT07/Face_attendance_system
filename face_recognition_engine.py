@@ -6,10 +6,13 @@ import os
 
 from resnet_face import myResnet20
 from face_detector import FaceDetector
-
-
-CHECKPOINT_PATH = "checkpoints/best_resnet.pth"
-EMBEDDING_DIM = 128
+from config import (
+    CHECKPOINT_PATH,
+    EMBEDDING_DIM,
+    FACE_INPUT_SIZE,
+    NORM_MEAN,
+    NORM_STD,
+)
 
 
 def select_device():
@@ -63,7 +66,7 @@ class FaceRecognitionEngine:
 
         face_resized = cv2.resize(
             face_rgb,
-            (112, 112),
+            FACE_INPUT_SIZE,
             interpolation=cv2.INTER_AREA
         )
 
@@ -71,7 +74,9 @@ class FaceRecognitionEngine:
             np.float32
         ) / 255.0
 
-        face_array = (face_array - 0.5) / 0.5
+        mean = np.array(NORM_MEAN, dtype=np.float32)
+        std = np.array(NORM_STD, dtype=np.float32)
+        face_array = (face_array - mean) / std
 
         face_array = np.transpose(
             face_array,

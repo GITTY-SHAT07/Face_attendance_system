@@ -9,9 +9,14 @@ try:
 except Exception:
     pass
 
+try:
+    from config import EMBEDDING_DIM
+except ImportError:
+    EMBEDDING_DIM = 128
+
 # Resnet Architecture for face recognition 
 class myResnet20(nn.Module):
-    def __init__(self, embedding_dim=128):
+    def __init__(self, embedding_dim=EMBEDDING_DIM):
         super(myResnet20, self).__init__()
         
         # intial conv

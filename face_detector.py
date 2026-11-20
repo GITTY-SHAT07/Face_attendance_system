@@ -2,8 +2,17 @@
 import cv2
 import os
 
-
-MODEL_PATH = "models/face_detection_yunet_2023mar.onnx"
+from config import (
+    YUNET_MODEL_PATH as MODEL_PATH,
+    YUNET_INPUT_SIZE,
+    YUNET_SCORE_THRESHOLD,
+    YUNET_NMS_THRESHOLD,
+    YUNET_TOP_K,
+    MIN_FACE_SIZE,
+    MIN_ASPECT_RATIO,
+    MAX_ASPECT_RATIO,
+    FACE_CROP_PADDING,
+)
 
 
 class FaceDetector:
@@ -17,10 +26,10 @@ class FaceDetector:
         self.detector = cv2.FaceDetectorYN_create(
             model_path,
             "",
-            (320, 320),
-            0.80,
-            0.30,
-            5000
+            YUNET_INPUT_SIZE,
+            YUNET_SCORE_THRESHOLD,
+            YUNET_NMS_THRESHOLD,
+            YUNET_TOP_K
         )
 
     def detect(self, frame):
@@ -39,22 +48,22 @@ class FaceDetector:
             x, y, w, h = face[:4]
             confidence = face[14]
 
-            if confidence < 0.80:
+            if confidence < YUNET_SCORE_THRESHOLD:
                 continue
 
-            if w < 60 or h < 60:
+            if w < MIN_FACE_SIZE or h < MIN_FACE_SIZE:
                 continue
 
             aspect_ratio = w / h
 
-            if aspect_ratio < 0.55 or aspect_ratio > 1.5:
+            if aspect_ratio < MIN_ASPECT_RATIO or aspect_ratio > MAX_ASPECT_RATIO:
                 continue
 
             valid_faces.append(face)
 
         return valid_faces
 
-    def crop_faces(self, frame, faces, padding=0.15):
+    def crop_faces(self, frame, faces, padding=FACE_CROP_PADDING):
         height, width = frame.shape[:2]
         crops = []
 

@@ -3,10 +3,12 @@ import csv
 from pathlib import Path
 from datetime import datetime
 
+from config import ATTENDANCE_FILE
+
 
 class AttendanceManager:
 
-    def __init__(self, attendance_file="data/attendance.csv"):
+    def __init__(self, attendance_file=ATTENDANCE_FILE):
         self.attendance_file = Path(attendance_file)
         self.attendance_file.parent.mkdir(parents=True, exist_ok=True)
 

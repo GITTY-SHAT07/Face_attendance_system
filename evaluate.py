@@ -7,11 +7,11 @@ import numpy as np
 
 from dataset import create_dataloaders
 from resnet_face import myResnet20
-
-
-CHECKPOINT_PATH = "checkpoints/best_resnet.pth"
-OUTPUT_PATH = "training_logs/embedding_evaluation.json"
-EMBEDDING_DIM = 128
+from config import (
+    CHECKPOINT_PATH,
+    EVALUATION_LOG_PATH as OUTPUT_PATH,
+    EMBEDDING_DIM,
+)
 
 
 def select_device():

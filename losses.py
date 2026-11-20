@@ -4,14 +4,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from config import (
+    EMBEDDING_DIM,
+    DEFAULT_NUM_CLASSES,
+    ARCFACE_MARGIN,
+    ARCFACE_SCALE,
+)
+
 
 class ArcFaceLoss(nn.Module):
     def __init__(
         self,
-        embedding_dim=128,
-        num_classes=40,
-        margin=0.5,
-        scale=32.0
+        embedding_dim=EMBEDDING_DIM,
+        num_classes=DEFAULT_NUM_CLASSES,
+        margin=ARCFACE_MARGIN,
+        scale=ARCFACE_SCALE
     ):
         super().__init__()
 

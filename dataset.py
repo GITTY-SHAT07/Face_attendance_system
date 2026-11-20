@@ -7,6 +7,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
+from config import FACE_INPUT_SIZE, NORM_MEAN, NORM_STD
 
 
 class ORLDataset(Dataset):
@@ -30,22 +31,22 @@ class ORLDataset(Dataset):
 
 def get_transforms():
     train_transform = transforms.Compose([
-        transforms.Resize((112, 112)),
+        transforms.Resize(FACE_INPUT_SIZE),
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomRotation(degrees=5),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=[0.5, 0.5, 0.5],
-            std=[0.5, 0.5, 0.5]
+            mean=NORM_MEAN,
+            std=NORM_STD
         )
     ])
 
     val_transform = transforms.Compose([
-        transforms.Resize((112, 112)),
+        transforms.Resize(FACE_INPUT_SIZE),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=[0.5, 0.5, 0.5],
-            std=[0.5, 0.5, 0.5]
+            mean=NORM_MEAN,
+            std=NORM_STD
         )
     ])
 

@@ -9,16 +9,15 @@ import torch.optim as optim
 from dataset import create_dataloaders
 from resnet_face import myResnet20
 from losses import ArcFaceLoss
-
-
-BATCH_SIZE = 16
-EPOCHS = 60
-LEARNING_RATE = 0.001
-WEIGHT_DECAY = 0.0005
-EMBEDDING_DIM = 128
-
-CHECKPOINT_DIR = "checkpoints"
-LOG_DIR = "training_logs"
+from config import (
+    TRAIN_BATCH_SIZE as BATCH_SIZE,
+    TRAIN_EPOCHS as EPOCHS,
+    TRAIN_LR as LEARNING_RATE,
+    TRAIN_WEIGHT_DECAY as WEIGHT_DECAY,
+    EMBEDDING_DIM,
+    CHECKPOINTS_DIR as CHECKPOINT_DIR,
+    TRAINING_LOGS_DIR as LOG_DIR,
+)
 
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)

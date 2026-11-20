@@ -2,18 +2,18 @@
 import cv2
 import os
 import re
-import json
 import numpy as np
 
 from face_recognition_engine import FaceRecognitionEngine
-
-
-KNOWN_FACES_DIR = "known_faces"
-SAMPLES_REQUIRED = 10
+from config import (
+    KNOWN_FACES_DIR,
+    SAMPLES_REQUIRED,
+    ROLL_NUMBER_REGEX,
+)
 
 
 def validate_roll_number(roll_number):
-    return re.fullmatch(r"[A-Za-z0-9_-]+", roll_number) is not None
+    return re.fullmatch(ROLL_NUMBER_REGEX, roll_number) is not None
 
 
 def register_student():

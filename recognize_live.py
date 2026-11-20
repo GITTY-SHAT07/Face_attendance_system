@@ -6,11 +6,13 @@ import numpy as np
 
 from face_recognition_engine import FaceRecognitionEngine
 from attendance_manager import AttendanceManager
-
-
-KNOWN_FACES_DIR = "known_faces"
-SIMILARITY_THRESHOLD = 0.651
-REQUIRED_CONSECUTIVE_FRAMES = 5
+from config import (
+    KNOWN_FACES_DIR,
+    SIMILARITY_THRESHOLD,
+    REQUIRED_CONSECUTIVE_FRAMES,
+    TOP_K_MATCH_SCORES,
+    EMBEDDING_DIM,
+)
 
 
 def load_registered_students():
@@ -28,7 +30,7 @@ def load_registered_students():
 
         embeddings = data["embeddings"].astype(np.float32)
 
-        if embeddings.ndim != 2 or embeddings.shape[1] != 128:
+        if embeddings.ndim != 2 or embeddings.shape[1] != EMBEDDING_DIM:
             print("Skipping invalid embedding file:", file_path)
             continue
 
@@ -56,7 +58,7 @@ def compare_embedding(query_embedding, registered_embeddings):
 
     scores = registered_embeddings @ query_embedding
 
-    top_scores = np.sort(scores)[-min(3, len(scores)):]
+    top_scores = np.sort(scores)[-min(TOP_K_MATCH_SCORES, len(scores)):]
 
     return float(np.mean(top_scores))
 
