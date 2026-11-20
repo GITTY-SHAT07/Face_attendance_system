@@ -1,4 +1,3 @@
-
 const API = "/api";
 
 let cameraActive = false;
@@ -19,6 +18,8 @@ async function requestJSON(url, options = {}) {
     return data;
 }
 
+// Load Dashboard Statistics
+
 async function loadStatistics() {
     try {
         const data = await requestJSON(`${API}/statistics`);
@@ -31,6 +32,8 @@ async function loadStatistics() {
         console.error("Statistics error:", error);
     }
 }
+
+// Load Attendance Records
 
 async function loadAttendance() {
     const params = new URLSearchParams();
@@ -76,6 +79,8 @@ async function loadAttendance() {
         console.error("Attendance error:", error);
     }
 }
+
+// Verification Pipeline
 
 function setPipeline(detailId, badgeId, detail, label, state = "pending") {
     byId(detailId).textContent = detail;
@@ -181,6 +186,8 @@ function updatePipeline(data) {
     );
 }
 
+// Update Live Recognition Status
+
 async function updateLiveStatus() {
     try {
         const data = await requestJSON(`${API}/live_status`);
@@ -219,6 +226,8 @@ async function updateLiveStatus() {
     }
 }
 
+// Start Camera
+
 // Keep the original Flask MJPEG image stream.
 // Do not wait for img.onload because MJPEG streams are long-lived.
 
@@ -251,6 +260,8 @@ function startCamera() {
     updateLiveStatus();
 }
 
+// Stop Camera
+
 function stopCamera() {
     const feed = byId("webcamFeed");
 
@@ -273,6 +284,8 @@ function stopCamera() {
     updateLiveStatus();
 }
 
+// Registration Controls
+
 function setRegistrationControls(active) {
     registrationActive = active;
 
@@ -281,6 +294,7 @@ function setRegistrationControls(active) {
     byId("cancelRegistration").disabled = !active;
 
     const quickBtn = byId("quickCaptureSample");
+
     if (quickBtn) {
         quickBtn.style.display = active ? "inline-flex" : "none";
         quickBtn.disabled = !active;
@@ -290,6 +304,8 @@ function setRegistrationControls(active) {
     byId("studentRollInput").disabled = active;
 }
 
+// Update Registration Progress
+
 function updateRegistrationProgress(data) {
     const captured = Number(data.captured || 0);
     const required = Number(data.required || 10);
@@ -297,6 +313,7 @@ function updateRegistrationProgress(data) {
     byId("sampleCount").textContent = captured;
 
     const quickCounter = byId("quickSampleCounter");
+
     if (quickCounter) {
         quickCounter.textContent = `${captured}/${required}`;
     }
@@ -319,6 +336,8 @@ function updateRegistrationProgress(data) {
         loadStatistics();
     }
 }
+
+// Begin Student Registration
 
 async function beginRegistration() {
     const name = byId("studentNameInput").value.trim();
@@ -366,6 +385,8 @@ async function beginRegistration() {
     }
 }
 
+// Capture Registration Sample
+
 async function captureSample() {
     const button = byId("captureSample");
 
@@ -391,6 +412,8 @@ async function captureSample() {
     }
 }
 
+// Check Registration Status
+
 async function updateRegistrationStatus() {
     try {
         const data = await requestJSON(`${API}/register/status`);
@@ -401,6 +424,8 @@ async function updateRegistrationStatus() {
         console.error("Registration status error:", error);
     }
 }
+
+// Cancel Registration
 
 async function cancelRegistration() {
     try {
@@ -425,6 +450,8 @@ async function cancelRegistration() {
     }
 }
 
+// Export Attendance CSV
+
 function exportAttendance() {
     const params = new URLSearchParams();
 
@@ -436,7 +463,8 @@ function exportAttendance() {
         `${API}/attendance/export?${params}`;
 }
 
-// Camera controls
+// Camera Button Event Listeners
+
 byId("startCamera").addEventListener(
     "click",
     startCamera
@@ -447,19 +475,31 @@ byId("stopCamera").addEventListener(
     stopCamera
 );
 
-// Quick Capture button under camera feed
+// Quick Capture Button Beside Camera
+
 const quickCaptureBtn = byId("quickCaptureSample");
+
 if (quickCaptureBtn) {
-    quickCaptureBtn.addEventListener("click", captureSample);
+    quickCaptureBtn.addEventListener(
+        "click",
+        captureSample
+    );
 }
 
-// Spacebar shortcut for instant sample capture
+// Spacebar Shortcut for Instant Sample Capture
+
 window.addEventListener("keydown", (e) => {
     if (e.code === "Space" && registrationActive) {
-        const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+
+        const tag = document.activeElement
+            ? document.activeElement.tagName.toLowerCase()
+            : "";
+
         if (tag !== "input" && tag !== "textarea") {
             e.preventDefault();
+
             const btn = byId("captureSample");
+
             if (btn && !btn.disabled) {
                 captureSample();
             }
@@ -467,50 +507,101 @@ window.addEventListener("keydown", (e) => {
     }
 });
 
-// Tab Switcher between Live Recognition and Registration
+// Tab Switcher
+
 const tabRecognition = byId("tabRecognition");
 const tabRegistration = byId("tabRegistration");
-const panelRecognitionContent = byId("panelRecognitionContent");
-const panelRegistrationContent = byId("panelRegistrationContent");
+
+const panelRecognitionContent =
+    byId("panelRecognitionContent");
+
+const panelRegistrationContent =
+    byId("panelRegistrationContent");
 
 function switchStageTab(tab) {
+
     if (tab === "registration") {
-        if (tabRegistration) tabRegistration.classList.add("active");
-        if (tabRecognition) tabRecognition.classList.remove("active");
-        if (panelRegistrationContent) panelRegistrationContent.style.display = "block";
-        if (panelRecognitionContent) panelRecognitionContent.style.display = "none";
+
+        if (tabRegistration) {
+            tabRegistration.classList.add("active");
+        }
+
+        if (tabRecognition) {
+            tabRecognition.classList.remove("active");
+        }
+
+        if (panelRegistrationContent) {
+            panelRegistrationContent.style.display = "block";
+        }
+
+        if (panelRecognitionContent) {
+            panelRecognitionContent.style.display = "none";
+        }
+
     } else {
-        if (tabRecognition) tabRecognition.classList.add("active");
-        if (tabRegistration) tabRegistration.classList.remove("active");
-        if (panelRecognitionContent) panelRecognitionContent.style.display = "block";
-        if (panelRegistrationContent) panelRegistrationContent.style.display = "none";
+
+        if (tabRecognition) {
+            tabRecognition.classList.add("active");
+        }
+
+        if (tabRegistration) {
+            tabRegistration.classList.remove("active");
+        }
+
+        if (panelRecognitionContent) {
+            panelRecognitionContent.style.display = "block";
+        }
+
+        if (panelRegistrationContent) {
+            panelRegistrationContent.style.display = "none";
+        }
     }
 }
 
+// Recognition Tab
+
 if (tabRecognition) {
-    tabRecognition.addEventListener("click", () => switchStageTab("recognition"));
+    tabRecognition.addEventListener(
+        "click",
+        () => switchStageTab("recognition")
+    );
 }
+
+// Registration Tab
 
 if (tabRegistration) {
-    tabRegistration.addEventListener("click", () => switchStageTab("registration"));
+    tabRegistration.addEventListener(
+        "click",
+        () => switchStageTab("registration")
+    );
 }
 
-// Connect sidebar links to tab switching
-const regNavLink = document.querySelector('.sidebar-nav a[href="#studentRegistration"]');
+// Sidebar Registration Link
+
+const regNavLink = document.querySelector(
+    '.sidebar-nav a[href="#studentRegistration"]'
+);
+
 if (regNavLink) {
     regNavLink.addEventListener("click", (e) => {
         switchStageTab("registration");
     });
 }
 
-const liveNavLink = document.querySelector('.sidebar-nav a[href="#liveRecognition"]');
+// Sidebar Live Recognition Link
+
+const liveNavLink = document.querySelector(
+    '.sidebar-nav a[href="#liveRecognition"]'
+);
+
 if (liveNavLink) {
     liveNavLink.addEventListener("click", (e) => {
         switchStageTab("recognition");
     });
 }
 
-// Registration controls
+// Registration Button Events
+
 byId("beginRegistration").addEventListener(
     "click",
     beginRegistration
@@ -526,32 +617,43 @@ byId("cancelRegistration").addEventListener(
     cancelRegistration
 );
 
-// Attendance controls
+// Attendance Search
+
 byId("searchInput").addEventListener(
     "input",
     loadAttendance
 );
+
+// Attendance Date Filter
 
 byId("dateFilter").addEventListener(
     "change",
     loadAttendance
 );
 
+// Reset Attendance Filters
+
 byId("resetButton").addEventListener("click", () => {
+
     byId("searchInput").value = "";
     byId("dateFilter").value = "";
 
     loadAttendance();
 });
 
+// Export Attendance
+
 byId("exportButton").addEventListener(
     "click",
     exportAttendance
 );
 
+// Initial Camera State
+
 byId("stopCamera").disabled = true;
 
-// Initial dashboard loading
+// Initial Dashboard Loading
+
 loadStatistics();
 loadAttendance();
 updateLiveStatus();
