@@ -280,6 +280,12 @@ function setRegistrationControls(active) {
     byId("captureSample").disabled = !active;
     byId("cancelRegistration").disabled = !active;
 
+    const quickBtn = byId("quickCaptureSample");
+    if (quickBtn) {
+        quickBtn.style.display = active ? "inline-flex" : "none";
+        quickBtn.disabled = !active;
+    }
+
     byId("studentNameInput").disabled = active;
     byId("studentRollInput").disabled = active;
 }
@@ -289,6 +295,11 @@ function updateRegistrationProgress(data) {
     const required = Number(data.required || 10);
 
     byId("sampleCount").textContent = captured;
+
+    const quickCounter = byId("quickSampleCounter");
+    if (quickCounter) {
+        quickCounter.textContent = `${captured}/${required}`;
+    }
 
     byId("progressBar").style.width =
         `${Math.min(captured / required * 100, 100)}%`;
@@ -435,6 +446,69 @@ byId("stopCamera").addEventListener(
     "click",
     stopCamera
 );
+
+// Quick Capture button under camera feed
+const quickCaptureBtn = byId("quickCaptureSample");
+if (quickCaptureBtn) {
+    quickCaptureBtn.addEventListener("click", captureSample);
+}
+
+// Spacebar shortcut for instant sample capture
+window.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && registrationActive) {
+        const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+        if (tag !== "input" && tag !== "textarea") {
+            e.preventDefault();
+            const btn = byId("captureSample");
+            if (btn && !btn.disabled) {
+                captureSample();
+            }
+        }
+    }
+});
+
+// Tab Switcher between Live Recognition and Registration
+const tabRecognition = byId("tabRecognition");
+const tabRegistration = byId("tabRegistration");
+const panelRecognitionContent = byId("panelRecognitionContent");
+const panelRegistrationContent = byId("panelRegistrationContent");
+
+function switchStageTab(tab) {
+    if (tab === "registration") {
+        if (tabRegistration) tabRegistration.classList.add("active");
+        if (tabRecognition) tabRecognition.classList.remove("active");
+        if (panelRegistrationContent) panelRegistrationContent.style.display = "block";
+        if (panelRecognitionContent) panelRecognitionContent.style.display = "none";
+    } else {
+        if (tabRecognition) tabRecognition.classList.add("active");
+        if (tabRegistration) tabRegistration.classList.remove("active");
+        if (panelRecognitionContent) panelRecognitionContent.style.display = "block";
+        if (panelRegistrationContent) panelRegistrationContent.style.display = "none";
+    }
+}
+
+if (tabRecognition) {
+    tabRecognition.addEventListener("click", () => switchStageTab("recognition"));
+}
+
+if (tabRegistration) {
+    tabRegistration.addEventListener("click", () => switchStageTab("registration"));
+}
+
+// Connect sidebar links to tab switching
+const regNavLink = document.querySelector('.sidebar-nav a[href="#studentRegistration"]');
+if (regNavLink) {
+    regNavLink.addEventListener("click", (e) => {
+        switchStageTab("registration");
+    });
+}
+
+const liveNavLink = document.querySelector('.sidebar-nav a[href="#liveRecognition"]');
+if (liveNavLink) {
+    liveNavLink.addEventListener("click", (e) => {
+        switchStageTab("recognition");
+    });
+}
 
 // Registration controls
 byId("beginRegistration").addEventListener(

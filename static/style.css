@@ -232,9 +232,94 @@ button { -webkit-tap-highlight-color: transparent; }
 
 .webcam-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(280px, .8fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
   gap: 20px;
-  align-items: stretch;
+  align-items: start;
+}
+
+.stage-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.stage-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  background: #eef2f7;
+  padding: 5px;
+  border-radius: 12px;
+  border: 1px solid #dfe6f0;
+}
+
+.stage-tab {
+  flex: 1;
+  min-height: 40px;
+  padding: 8px 14px;
+  color: #55657e;
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.18s ease;
+}
+
+.stage-tab:hover {
+  color: #1a2744;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.stage-tab.active {
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 4px 12px rgba(79, 99, 220, 0.28);
+}
+
+.btn-capture-camera {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #059669 !important;
+  color: #fff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  padding: 10px 18px !important;
+  border-radius: 9px !important;
+  border: 1px solid #047857 !important;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35) !important;
+  animation: pulse-capture 1.8s infinite;
+}
+
+.btn-capture-camera:hover:not(:disabled) {
+  background: #047857 !important;
+  transform: translateY(-1px);
+}
+
+.btn-capture-sample {
+  background: #059669 !important;
+  border-color: #047857 !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+
+.btn-capture-sample:hover:not(:disabled) {
+  background: #047857 !important;
+}
+
+.reg-subtitle {
+  margin: 0 0 16px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+@keyframes pulse-capture {
+  0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(5, 150, 105, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
 }
 
 .webcam-card, .recognition-panel {
